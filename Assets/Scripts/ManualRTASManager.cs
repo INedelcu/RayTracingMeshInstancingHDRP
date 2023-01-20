@@ -2,10 +2,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
+using UnityEngine.UI;
 
 [ExecuteInEditMode]
 public class ManualRTASManager : MonoBehaviour
 {
+    public Toggle enableInstancingToggle;
+    
+    public Text fpsText;
+
     public Mesh mesh = null;
     public Material material1 = null;
     public Material material2 = null;
@@ -16,8 +21,26 @@ public class ManualRTASManager : MonoBehaviour
     List<Matrix4x4> matrices2 = new List<Matrix4x4>();
     List<Matrix4x4> matrices3 = new List<Matrix4x4>();
 
+    private float lastRealtimeSinceStartup = 0;
+    private float updateFPSTimer = 0.2f;
+
     void Update()
     {
+        if (fpsText)
+        {
+            float deltaTime = Time.realtimeSinceStartup - lastRealtimeSinceStartup;
+            updateFPSTimer += deltaTime;
+
+            if (updateFPSTimer >= 0.2f)
+            {
+                float fps = 1.0f / Mathf.Max(deltaTime, 0.0001f);
+                fpsText.text = "FPS: " + Mathf.Ceil(fps).ToString();
+                updateFPSTimer = 0.0f;
+            }
+
+            lastRealtimeSinceStartup = Time.realtimeSinceStartup;
+        }
+
         HDRenderPipeline hdrp = RenderPipelineManager.currentPipeline is HDRenderPipeline ? (HDRenderPipeline)RenderPipelineManager.currentPipeline : null;
         if (hdrp != null)
         {
@@ -47,6 +70,8 @@ public class ManualRTASManager : MonoBehaviour
 
             rtas.CullInstances(ref cullingConfig);
 
+            bool enableInstancing = !enableInstancingToggle || enableInstancingToggle.isOn;
+
             if (mesh != null && material1 != null)
             {
                 RayTracingMeshInstanceConfig config = new RayTracingMeshInstanceConfig(mesh, 0, material1);
@@ -54,9 +79,19 @@ public class ManualRTASManager : MonoBehaviour
                 config.subMeshFlags = RayTracingSubMeshFlags.Enabled | RayTracingSubMeshFlags.ClosestHitOnly;
 
                 // Not providing SH coeffs at all.
-                config.lightProbeUsage = LightProbeUsage.CustomProvided;                
+                config.lightProbeUsage = LightProbeUsage.CustomProvided;
 
-                rtas.AddInstances(config, matrices1);
+                if (enableInstancing)
+                {
+                    rtas.AddInstances(config, matrices1);
+                }
+                else
+                {
+                    for (int i = 0; i < matrices1.Count; i++)
+                    {
+                        rtas.AddInstance(config, matrices1[i]);
+                    }
+                }
             }
 
             if (mesh != null && material2 != null)
@@ -68,7 +103,17 @@ public class ManualRTASManager : MonoBehaviour
                 // Not providing SH coeffs at all.
                 config.lightProbeUsage = LightProbeUsage.CustomProvided;
 
-                rtas.AddInstances(config, matrices2);
+                if (enableInstancing)
+                {
+                    rtas.AddInstances(config, matrices2);
+                }
+                else
+                {
+                    for (int i = 0; i < matrices2.Count; i++)
+                    {
+                        rtas.AddInstance(config, matrices2[i]);
+                    }
+                }
             }
 
             if (mesh != null && material3 != null)
@@ -80,7 +125,17 @@ public class ManualRTASManager : MonoBehaviour
                 // Not providing SH coeffs at all.
                 config.lightProbeUsage = LightProbeUsage.CustomProvided;
 
-                rtas.AddInstances(config, matrices3);
+                if (enableInstancing)
+                {
+                    rtas.AddInstances(config, matrices3);
+                }
+                else
+                {
+                    for (int i = 0; i < matrices3.Count; i++)
+                    {
+                        rtas.AddInstance(config, matrices3[i]);
+                    }
+                }
             }
 
             // Build the RTAS
