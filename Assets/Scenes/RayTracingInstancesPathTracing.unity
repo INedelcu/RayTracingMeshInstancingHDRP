@@ -1294,7 +1294,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'FPS: 38'
+  m_Text: 'FPS: 3'
 --- !u!222 &1307686589
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1528,7 +1528,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enable RT Instancing
+  m_Text: RT Instancing
 --- !u!222 &1944183441
 CanvasRenderer:
   m_ObjectHideFlags: 0
