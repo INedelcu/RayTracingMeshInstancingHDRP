@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -70,74 +71,82 @@ public class ManualRTASManager : MonoBehaviour
 
             rtas.CullInstances(ref cullingConfig);
 
-            bool enableInstancing = !enableInstancingToggle || enableInstancingToggle.isOn;
-
-            if (mesh != null && material1 != null)
+            try
             {
-                RayTracingMeshInstanceConfig config = new RayTracingMeshInstanceConfig(mesh, 0, material1);
+                bool enableInstancing = !enableInstancingToggle || enableInstancingToggle.isOn;
 
-                config.subMeshFlags = RayTracingSubMeshFlags.Enabled | RayTracingSubMeshFlags.ClosestHitOnly;
-
-                // Not providing SH coeffs at all.
-                config.lightProbeUsage = LightProbeUsage.CustomProvided;
-
-                if (enableInstancing)
+                if (mesh != null && material1 != null)
                 {
-                    rtas.AddInstances(config, matrices1);
-                }
-                else
-                {
-                    for (int i = 0; i < matrices1.Count; i++)
+                    RayTracingMeshInstanceConfig config = new RayTracingMeshInstanceConfig(mesh, 0, material1);
+
+                    config.subMeshFlags = RayTracingSubMeshFlags.Enabled | RayTracingSubMeshFlags.ClosestHitOnly;
+
+                    // Not providing SH coeffs at all.
+                    config.lightProbeUsage = LightProbeUsage.CustomProvided;
+
+                    if (enableInstancing)
                     {
-                        rtas.AddInstance(config, matrices1[i]);
+                        rtas.AddInstances(config, matrices1);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < matrices1.Count; i++)
+                        {
+                            rtas.AddInstance(config, matrices1[i]);
+                        }
                     }
                 }
-            }
 
-            if (mesh != null && material2 != null)
-            {
-                RayTracingMeshInstanceConfig config = new RayTracingMeshInstanceConfig(mesh, 0, material2);
-
-                config.subMeshFlags = RayTracingSubMeshFlags.Enabled | RayTracingSubMeshFlags.ClosestHitOnly;
-
-                // Not providing SH coeffs at all.
-                config.lightProbeUsage = LightProbeUsage.CustomProvided;
-
-                if (enableInstancing)
+                if (mesh != null && material2 != null)
                 {
-                    rtas.AddInstances(config, matrices2);
-                }
-                else
-                {
-                    for (int i = 0; i < matrices2.Count; i++)
+                    RayTracingMeshInstanceConfig config = new RayTracingMeshInstanceConfig(mesh, 0, material2);
+
+                    config.subMeshFlags = RayTracingSubMeshFlags.Enabled | RayTracingSubMeshFlags.ClosestHitOnly;
+
+                    // Not providing SH coeffs at all.
+                    config.lightProbeUsage = LightProbeUsage.CustomProvided;
+
+                    if (enableInstancing)
                     {
-                        rtas.AddInstance(config, matrices2[i]);
+                        rtas.AddInstances(config, matrices2);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < matrices2.Count; i++)
+                        {
+                            rtas.AddInstance(config, matrices2[i]);
+                        }
                     }
                 }
-            }
 
-            if (mesh != null && material3 != null)
-            {
-                RayTracingMeshInstanceConfig config = new RayTracingMeshInstanceConfig(mesh, 0, material3);
-
-                config.subMeshFlags = RayTracingSubMeshFlags.Enabled | RayTracingSubMeshFlags.ClosestHitOnly;
-
-                // Not providing SH coeffs at all.
-                config.lightProbeUsage = LightProbeUsage.CustomProvided;
-
-                if (enableInstancing)
+                if (mesh != null && material3 != null)
                 {
-                    rtas.AddInstances(config, matrices3);
-                }
-                else
-                {
-                    for (int i = 0; i < matrices3.Count; i++)
+                    RayTracingMeshInstanceConfig config = new RayTracingMeshInstanceConfig(mesh, 0, material3);
+
+                    config.subMeshFlags = RayTracingSubMeshFlags.Enabled | RayTracingSubMeshFlags.ClosestHitOnly;
+
+                    // Not providing SH coeffs at all.
+                    config.lightProbeUsage = LightProbeUsage.CustomProvided;
+
+                    if (enableInstancing)
                     {
-                        rtas.AddInstance(config, matrices3[i]);
+                        rtas.AddInstances(config, matrices3);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < matrices3.Count; i++)
+                        {
+                            rtas.AddInstance(config, matrices3[i]);
+                        }
                     }
                 }
-            }
 
+            }
+            catch (Exception e)
+            {
+                Debug.Log("An exception occurred: " + e.Message);
+            }
+         
             // Build the RTAS
             rtas.Build(transform.position);
 
