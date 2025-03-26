@@ -4,28 +4,26 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
-using static ManualRTASManager;
 
 [ExecuteInEditMode]
 public class ManualRTASManager : MonoBehaviour
 {
+    public Toggle enableInstancingToggle;
+    
     public Text fpsText;
 
-    public Material material = null;
+    public Mesh mesh = null;
+    public Material material1 = null;
+    public Material material2 = null;
+    public Material material3 = null;
 
     RayTracingAccelerationStructure rtas = null;
-    List<Matrix4x4> matrices = new List<Matrix4x4>();
-
-    GraphicsBuffer aabbBuffer = null;
+    List<Matrix4x4> matrices1 = new List<Matrix4x4>();
+    List<Matrix4x4> matrices2 = new List<Matrix4x4>();
+    List<Matrix4x4> matrices3 = new List<Matrix4x4>();
 
     private float lastRealtimeSinceStartup = 0;
     private float updateFPSTimer = 0.2f;
-
-    public struct AABB
-    {
-        public Vector3 min;
-        public Vector3 max;
-    }
 
     void Update()
     {
@@ -51,18 +49,14 @@ public class ManualRTASManager : MonoBehaviour
 
             if (rtas == null)
                 rtas = new RayTracingAccelerationStructure();
-
+            
             rtas.ClearInstances();
 
             RayTracingInstanceCullingConfig cullingConfig = new RayTracingInstanceCullingConfig();
 
-            RayTracingSubMeshFlagsConfig subMeshFlagsConfig = new RayTracingSubMeshFlagsConfig();
-
-            subMeshFlagsConfig.opaqueMaterials = RayTracingSubMeshFlags.Enabled | RayTracingSubMeshFlags.ClosestHitOnly;
-            subMeshFlagsConfig.alphaTestedMaterials = RayTracingSubMeshFlags.Enabled;
-            subMeshFlagsConfig.transparentMaterials = RayTracingSubMeshFlags.Disabled;
-
-            cullingConfig.subMeshFlagsConfig = subMeshFlagsConfig;
+            cullingConfig.subMeshFlagsConfig.opaqueMaterials = RayTracingSubMeshFlags.Enabled | RayTracingSubMeshFlags.ClosestHitOnly;
+            cullingConfig.subMeshFlagsConfig.alphaTestedMaterials = RayTracingSubMeshFlags.Enabled;
+            cullingConfig.subMeshFlagsConfig.transparentMaterials = RayTracingSubMeshFlags.Disabled;
 
             RayTracingInstanceCullingTest cullingTest = new RayTracingInstanceCullingTest();
             cullingTest.allowAlphaTestedMaterials = true;
@@ -79,26 +73,80 @@ public class ManualRTASManager : MonoBehaviour
 
             try
             {
-                if (material != null)
+                bool enableInstancing = !enableInstancingToggle || enableInstancingToggle.isOn;
+
+                if (mesh != null && material1 != null)
                 {
-                    RayTracingAABBsInstanceConfig config = new RayTracingAABBsInstanceConfig();
+                    RayTracingMeshInstanceConfig config = new RayTracingMeshInstanceConfig(mesh, 0, material1);
 
-                    config.aabbBuffer = aabbBuffer;
-                    config.aabbCount = aabbBuffer.count;
-                    config.aabbOffset = 0;
-                    config.dynamicGeometry = false;
-                    config.material = material;
-                    config.materialProperties = new MaterialPropertyBlock();
-                    config.materialProperties.SetBuffer("AABBs", aabbBuffer);
+                    config.subMeshFlags = RayTracingSubMeshFlags.Enabled | RayTracingSubMeshFlags.ClosestHitOnly;
 
-                    rtas.AddInstance(config, Matrix4x4.identity);
+                    // Not providing SH coeffs at all.
+                    config.lightProbeUsage = LightProbeUsage.CustomProvided;
+
+                    if (enableInstancing)
+                    {
+                        rtas.AddInstances(config, matrices1);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < matrices1.Count; i++)
+                        {
+                            rtas.AddInstance(config, matrices1[i]);
+                        }
+                    }
                 }
+
+                if (mesh != null && material2 != null)
+                {
+                    RayTracingMeshInstanceConfig config = new RayTracingMeshInstanceConfig(mesh, 0, material2);
+
+                    config.subMeshFlags = RayTracingSubMeshFlags.Enabled | RayTracingSubMeshFlags.ClosestHitOnly;
+
+                    // Not providing SH coeffs at all.
+                    config.lightProbeUsage = LightProbeUsage.CustomProvided;
+
+                    if (enableInstancing)
+                    {
+                        rtas.AddInstances(config, matrices2);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < matrices2.Count; i++)
+                        {
+                            rtas.AddInstance(config, matrices2[i]);
+                        }
+                    }
+                }
+
+                if (mesh != null && material3 != null)
+                {
+                    RayTracingMeshInstanceConfig config = new RayTracingMeshInstanceConfig(mesh, 0, material3);
+
+                    config.subMeshFlags = RayTracingSubMeshFlags.Enabled | RayTracingSubMeshFlags.ClosestHitOnly;
+
+                    // Not providing SH coeffs at all.
+                    config.lightProbeUsage = LightProbeUsage.CustomProvided;
+
+                    if (enableInstancing)
+                    {
+                        rtas.AddInstances(config, matrices3);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < matrices3.Count; i++)
+                        {
+                            rtas.AddInstance(config, matrices3[i]);
+                        }
+                    }
+                }
+
             }
             catch (Exception e)
             {
                 Debug.Log("An exception occurred: " + e.Message);
             }
-
+         
             // Build the RTAS
             rtas.Build(transform.position);
 
@@ -134,32 +182,14 @@ public class ManualRTASManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GenerateInstanceMatrices(new Vector3(0, 0, 0), out matrices);
-
-        {
-            aabbBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, matrices.Count, 6 * sizeof(float));
-
-            AABB[] aabbs = new AABB[matrices.Count];
-            for (int i = 0; i < matrices.Count; i++)
-            {
-                AABB aabb = new AABB();
-
-                Vector3 center = matrices[i].GetPosition();
-                Vector3 size = new Vector3(0.3f, 0.3f, 0.3f);
-
-                aabb.min = center - size;
-                aabb.max = center + size;
-
-                aabbs[i] = aabb;
-            }
-            aabbBuffer.SetData(aabbs);
-        }
+        GenerateInstanceMatrices(new Vector3(-55.0f, 0, -50.0f), out matrices1);
+        GenerateInstanceMatrices(new Vector3(55.0f, 0, -50.0f), out matrices2);
+        GenerateInstanceMatrices(new Vector3(0.0f, 0, 50.0f), out matrices3);
     }
 
     void OnDestroy()
     {
-        matrices.Clear();
-        rtas?.Dispose();
-        aabbBuffer?.Dispose();
+        if (rtas != null)
+            rtas.Dispose();
     }
 }

@@ -8,6 +8,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RayTracingInstancesPathTracing.unity
     guid: 3db1837cc97a95e4c98610966fac2b0b
-  m_configObjects:
-    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: e5e149dbe810f5c4db8ad67f9e657104, type: 3}
+  m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
