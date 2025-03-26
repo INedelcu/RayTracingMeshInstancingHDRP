@@ -16,6 +16,9 @@ MonoBehaviour:
   rayBias:
     m_OverrideState: 1
     m_Value: 0.005
+  distantRayBias:
+    m_OverrideState: 0
+    m_Value: 0.005
   extendShadowCulling:
     m_OverrideState: 0
     m_Value: 0
@@ -68,10 +71,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f086a068d4c5889438831b3ae9afc11c, type: 3}
   m_Name: Tonemapping
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   mode:
     m_OverrideState: 1
-    m_Value: 3
+    m_Value: 2
   useFullACES:
     m_OverrideState: 0
     m_Value: 0
@@ -149,7 +152,7 @@ MonoBehaviour:
       m_Bits: 4294967295
   maximumSamples:
     m_OverrideState: 1
-    m_Value: 256
+    m_Value: 512
   minimumDepth:
     m_OverrideState: 1
     m_Value: 1
@@ -158,7 +161,7 @@ MonoBehaviour:
     m_Value: 6
   maximumIntensity:
     m_OverrideState: 1
-    m_Value: 20
+    m_Value: 47.36
   denoising:
     m_OverrideState: 1
     m_Value: 1
@@ -167,6 +170,9 @@ MonoBehaviour:
     m_Value: 1
   temporal:
     m_OverrideState: 1
+    m_Value: 0
+  separateVolumetrics:
+    m_OverrideState: 0
     m_Value: 0
   asyncDenoising:
     m_OverrideState: 1
@@ -177,6 +183,12 @@ MonoBehaviour:
   tilingParameters:
     m_OverrideState: 1
     m_Value: {x: 1, y: 1, z: 0, w: 0}
+  seedMode:
+    m_OverrideState: 0
+    m_Value: 0
+  customSeed:
+    m_OverrideState: 0
+    m_Value: 0
 --- !u!114 &2914829841900831779
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -194,14 +206,14 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 0
   skyIntensityMode:
-    m_OverrideState: 1
-    m_Value: 0
+    m_OverrideState: 0
+    m_Value: 2
   exposure:
     m_OverrideState: 1
     m_Value: 16
   multiplier:
     m_OverrideState: 0
-    m_Value: 1
+    m_Value: 11.2
   upperHemisphereLuxValue:
     m_OverrideState: 1
     m_Value: 0.46607146
@@ -246,6 +258,12 @@ MonoBehaviour:
       customValue: 100
       additiveValue: 0
       multiplyValue: 1
+  sunInitialRotation:
+    m_OverrideState: 0
+    m_Value: -Infinity
+  lockSun:
+    m_OverrideState: 0
+    m_Value: 0
   enableBackplate:
     m_OverrideState: 0
     m_Value: 0
@@ -336,6 +354,18 @@ MonoBehaviour:
   skyAmbientMode:
     m_OverrideState: 0
     m_Value: 1
+  planetRadius:
+    m_OverrideState: 0
+    m_Value: 6378.1
+  renderingSpace:
+    m_OverrideState: 0
+    m_Value: 1
+  centerMode:
+    m_OverrideState: 0
+    m_Value: 0
+  planetCenter:
+    m_OverrideState: 0
+    m_Value: {x: 0, y: -6378.1, z: 0}
   windOrientation:
     m_OverrideState: 0
     m_Value: 0
@@ -345,3 +375,4 @@ MonoBehaviour:
   fogType:
     m_OverrideState: 0
     m_Value: 0
+  m_Version: 1
