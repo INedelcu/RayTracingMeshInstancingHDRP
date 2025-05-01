@@ -7,7 +7,7 @@ Unity sample project using Mesh instancing in HDRP Path Tracing.
 ## Description
 The project uses [RayTracingAccelerationStructure.AddInstances](https://docs.unity3d.com/2023.1/Documentation/ScriptReference/Rendering.RayTracingAccelerationStructure.AddInstances.html) function to add many ray tracing Mesh instances to an acceleration structure. HDRP Path Tracing is used to generate a high-quality image.
 
-The acceleration structure in this project is manually managed. This can be set in Ray Tracing Settings from Volume settings. [ManualRTASManager.cs](Assets/Scripts/ManualRTASManager.cs) is where the 3 procedural sculptures are generated and added to the acceleration structure. Regular scene geometries can be added to the acceleration structure using [RayTracingAccelerationStructure.CullInstances](https://docs.unity3d.com/2023.1/Documentation/ScriptReference/Rendering.RayTracingAccelerationStructure.CullInstances.html) function.
+The acceleration structure in this project is manually managed. This can be set in Ray Tracing Settings (Advanced settings) from Volume settings. [ManualRTASManager.cs](Assets/Scripts/ManualRTASManager.cs) is where the 3 procedural sculptures are generated and added to the acceleration structure. Regular scene geometries can be added to the acceleration structure using [RayTracingAccelerationStructure.CullInstances](https://docs.unity3d.com/2023.1/Documentation/ScriptReference/Rendering.RayTracingAccelerationStructure.CullInstances.html) function.
 
 Go to Game view and click on Play to generate the image. Intel Open Image Denoiser is used to remove the final noise.
 
